@@ -273,6 +273,14 @@ struct flb_systemd_config *flb_systemd_config_create(struct flb_input_instance *
         ctx->strip_underscores = FLB_FALSE;
     }
 
+    /* Keep field case by default or convert all fields to lowercase */
+    tmp = flb_input_get_property("fields_lowercase", ins);
+    if (tmp != NULL && flb_utils_bool(tmp)) {
+        ctx->fields_lowercase = FLB_TRUE;
+    } else {
+        ctx->fields_lowercase = FLB_FALSE;
+    }
+
     sd_journal_get_data_threshold(ctx->j, &size);
     flb_plg_debug(ctx->ins,
                   "sd_journal library may truncate values "

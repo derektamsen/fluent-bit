@@ -18,6 +18,7 @@
  *  limitations under the License.
  */
 
+#include <ctype.h>
 #include <fluent-bit/flb_info.h>
 #include <fluent-bit/flb_input_plugin.h>
 #include <fluent-bit/flb_config.h>
@@ -210,6 +211,14 @@ static int in_systemd_collect(struct flb_input_instance *ins,
                 key++;
                 length--;
             }
+
+            /* optionally convert field keys to lowercase */
+            if (ctx->fields_lowercase == FLB_TRUE) {
+                for(int i = 0; key[i]; i++) {
+                    key[i] = tolower(skey[i]);
+                }
+            }
+
             sep = strchr(key, '=');
             len = (sep - key);
             msgpack_pack_str(&mp_pck, len);
